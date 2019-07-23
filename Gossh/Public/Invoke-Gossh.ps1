@@ -60,6 +60,8 @@ function Invoke-Gossh {
 
     $Results = Invoke-Expression -Command $GosshExpression
 
+    Remove-Variable -Name 'GosshCommand', 'GosshUsername', 'GosshPassword'
+
     #############################################################
     #endregion invokeGossh
 
