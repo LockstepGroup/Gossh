@@ -65,6 +65,11 @@ Task Build -Depends Test {
     If ($ENV:BHBuildSystem -ne 'AppVeyor') {
         # Bump the module version
         Update-Metadata -Path $env:BHPSModuleManifest
+        if ($ENV:ReleaseNotes) {
+            Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ReleaseNotes -Value $ENV:ReleaseNotes
+        } else {
+            Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ReleaseNotes -Value @()
+        }
     }
 }
 

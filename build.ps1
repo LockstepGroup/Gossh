@@ -1,5 +1,13 @@
 [Cmdletbinding()]
-Param ()
+Param (
+    [Parameter(Mandatory = $false, Poisition = 0)]
+    [string[]]$ReleaseNotes
+)
+
+if ($ReleaseNotes) {
+    $ENV:ReleaseNotes = $ReleaseNotes
+}
+
 function Resolve-Module {
     [Cmdletbinding()]
     param
