@@ -12,7 +12,7 @@
     RootModule        = 'Gossh'
 
     # Version number of this module.
-    ModuleVersion     = '0.0.1'
+    ModuleVersion     = '0.0.2'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -51,7 +51,7 @@
     # ProcessorArchitecture = ''
 
     # Modules that must be imported into the global environment prior to importing this module
-    # RequiredModules = @()
+    RequiredModules   = @('CorkScrew')
 
     # Assemblies that must be loaded prior to importing this module
     # RequiredAssemblies = @()
@@ -101,13 +101,13 @@
             LicenseUri   = 'https://raw.githubusercontent.com/LockstepGroup/Gossh/master/LICENSE'
 
             # A URL to the main website for this project.
-            # ProjectUri = 'https://github.com/LockstepGroup/Gossh'
+            ProjectUri   = 'https://github.com/LockstepGroup/Gossh'
 
             # A URL to an icon representing this module.
             # IconUri = ''
 
             # ReleaseNotes of this module
-            ReleaseNotes = 'Initial release'
+            ReleaseNotes = 'Inital Release'
 
         } # End of PSData hashtable
 
@@ -118,6 +118,7 @@
 
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
-
 }
+
+
 

@@ -1,6 +1,6 @@
 [Cmdletbinding()]
 Param (
-    [Parameter(Mandatory = $false, Poisition = 0)]
+    [Parameter(Mandatory = $false, Position = 0)]
     [string[]]$ReleaseNotes
 )
 
