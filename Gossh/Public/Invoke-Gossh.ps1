@@ -29,12 +29,22 @@ function Invoke-Gossh {
     switch -Regex (Get-OsVersion) {
         'MacOS' {
             $GosshBinaryName = 'gossh'
+            $GosshPath = Join-Path -Path (Split-Path -Path $PSScriptRoot) -ChildPath "Bin/$GosshBinaryName"
+            # check to see if executable
+            $NixPath = $GosshPath -replace '([\ \(\)])', '\$1'
+            $ExecutableCheckCommand = 'bash -c "if [ -x ' + $NixPath + ' ]; then echo true; else echo false; fi"'
+            $IsExecutable = Invoke-Expression -Command $ExecutableCheckCommand
+            if ($IsExecutable -notmatch 'true') {
+                $ExecutableCheckCommand = 'bash -c "chmod +x ' + $NixPath + '"'
+                $MakeExecutable = Invoke-Expression -Command $ExecutableCheckCommand
+            }
         }
         default {
             $GosshBinaryName = 'gossh.exe'
+            $GosshPath = Join-Path -Path (Split-Path -Path $PSScriptRoot) -ChildPath "Bin/$GosshBinaryName"
         }
     }
-    $GosshPath = Join-Path -Path (Split-Path -Path $PSScriptRoot) -ChildPath "Bin/$GosshBinaryName"
+
     Write-Verbose "$VerbosePrefix GosshPath: $GosshPath"
 
     #############################################################
