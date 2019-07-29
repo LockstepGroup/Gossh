@@ -18,7 +18,12 @@ function Invoke-Gossh {
 
         [Parameter(Mandatory = $false)]
         [ValidateRange(0, 65535)]
-        [int]$Port = 22
+        [int]$Port = 22,
+
+        [Parameter(Mandatory = $false)]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $EnableCredential
     )
 
     $VerbosePrefix = "Invoke-Gossh:"
@@ -64,7 +69,13 @@ function Invoke-Gossh {
     $GosshExpression += ' -pass ' + $GosshPassword
     $GosshExpression += ' -device ' + $DeviceType
     $GosshExpression += ' -port ' + $Port
-    $GosshExpression += ' -config "' + $GosshCommand + '"'
+    $GosshExpression += ' -command "' + $GosshCommand + '"'
+
+    if ($EnableCredential) {
+        #$EnableCredential = New-Object System.Management.Automation.PSCredential ('test', $EnablePassword)
+        $EnablePassword = $EnableCredential.GetNetworkCredential().Password
+        $GosshExpression += " -enable '" + $EnablePassword + "'"
+    }
 
     Write-Verbose $GosshExpression
 
