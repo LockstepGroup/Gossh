@@ -66,7 +66,7 @@ function Invoke-Gossh {
     $GosshExpression = '. "' + $GosshPath + '"'
     $GosshExpression += ' -host ' + $Hostname
     $GosshExpression += ' -user ' + $GosshUsername
-    $GosshExpression += ' -pass ' + $GosshPassword
+    $GosshExpression += ' -pass ' + "'" + $GosshPassword + "'"
     $GosshExpression += ' -device ' + $DeviceType
     $GosshExpression += ' -port ' + $Port
     $GosshExpression += ' -command "' + $GosshCommand + '"'

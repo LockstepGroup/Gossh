@@ -13,9 +13,9 @@ Properties {
     $CoverageFile = "cov.xml"
     $lines = '----------------------------------------------------------------------'
 
-    $Verbose = @{}
+    $Verbose = @{ }
     if ($ENV:BHCommitMessage -match "!verbose") {
-        $Verbose = @{Verbose = $True}
+        $Verbose = @{Verbose = $True }
     }
 }
 
@@ -60,6 +60,8 @@ Task Build -Depends Test {
     If ($ENV:BHBuildSystem -eq 'AppVeyor') {
         # Load the module, read the exported functions, update the psd1 FunctionsToExport
         Set-ModuleFunctions
+
+        # download and install go
     }
 
     If ($ENV:BHBuildSystem -ne 'AppVeyor') {

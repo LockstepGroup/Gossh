@@ -30,3 +30,7 @@ config.json*
 
 # Log Files
 *.log
+
+# transient go files
+go/pkg
+go/src
