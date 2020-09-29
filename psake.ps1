@@ -60,8 +60,6 @@ Task Build -Depends Test {
     If ($ENV:BHBuildSystem -eq 'AppVeyor') {
         # Load the module, read the exported functions, update the psd1 FunctionsToExport
         Set-ModuleFunctions
-
-        # download and install go
     }
 
     If ($ENV:BHBuildSystem -ne 'AppVeyor') {
@@ -73,6 +71,12 @@ Task Build -Depends Test {
             Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ReleaseNotes -Value @()
         }
     }
+
+    <# if ((Get-OsVersion) -match 'Windows') {
+        # download and install go
+        ./build-install-go.ps1
+    }
+    ./build-compile-go.ps1 #>
 }
 
 Task Deploy -Depends Build {

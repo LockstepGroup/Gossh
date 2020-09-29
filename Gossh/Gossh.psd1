@@ -12,7 +12,7 @@
     RootModule        = 'Gossh'
 
     # Version number of this module.
-    ModuleVersion     = '0.0.4'
+    ModuleVersion     = '0.0.9'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -107,7 +107,7 @@
             # IconUri = ''
 
             # ReleaseNotes of this module
-            ReleaseNotes = 'Added EnableCredential support'
+            ReleaseNotes = @()
 
         } # End of PSData hashtable
 
@@ -119,6 +119,10 @@
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
 }
+
+
+
+
 
 
 

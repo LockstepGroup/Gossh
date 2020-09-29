@@ -10,7 +10,7 @@ function Invoke-Gossh {
         $Credential,
 
         [Parameter(Mandatory = $true, Position = 2)]
-        [ValidateSet("ExtremeExos", "ExtremeEos", "CiscoASA", "PaloAlto", "HP", "CiscoSwitch", "Lab")]
+        [ValidateSet("ExtremeExos","ExtremeEos","CiscoASA","PaloAlto","HpSwitch","HpRouter","HpAruba","CiscoSwitch","GetConsole","SonicWall","CiscoSB")]
         [string]$DeviceType,
 
         [Parameter(Mandatory = $true, Position = 3)]
@@ -59,13 +59,19 @@ function Invoke-Gossh {
     #############################################################
     # \gossh.exe -host 1.1.1.1 -user admin -pass password -device lab -port 4001 -config "terminal pager 0/show run interface"
 
-    $GosshCommand = $Command -join '/'
+    $GosshCommand = $Command -join '//'
     $GosshUsername = $Credential.UserName
     $GosshPassword = $Credential.GetNetworkCredential().Password
 
     $GosshExpression = '. "' + $GosshPath + '"'
     $GosshExpression += ' -host ' + $Hostname
     $GosshExpression += ' -user ' + $GosshUsername
+    <#     if ('' -eq $GosshPassword) {
+        Write-Verbose "$Password is null"
+        $GosshExpression += ' -pass ' + "'" + '\r\n' + "'"
+    } else {
+        $GosshExpression += ' -pass ' + "'" + $GosshPassword + "'"
+    } #>
     $GosshExpression += ' -pass ' + "'" + $GosshPassword + "'"
     $GosshExpression += ' -device ' + $DeviceType
     $GosshExpression += ' -port ' + $Port
