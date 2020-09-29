@@ -12,7 +12,7 @@
     RootModule        = 'Gossh'
 
     # Version number of this module.
-    ModuleVersion     = '0.0.11'
+    ModuleVersion     = '0.0.12'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -119,6 +119,8 @@
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
 }
+
+
 
 
 

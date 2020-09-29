@@ -10,10 +10,11 @@ function Invoke-Gossh {
         $Credential,
 
         [Parameter(Mandatory = $true, Position = 2)]
-        [ValidateSet("ExtremeExos","ExtremeEos","CiscoASA","PaloAlto","HpSwitch","HpRouter","HpAruba","CiscoSwitch","GetConsole","SonicWall","CiscoSB")]
+        [ValidateSet("ExtremeExos", "ExtremeEos", "CiscoASA", "PaloAlto", "HpSwitch", "HpRouter", "HpAruba", "CiscoSwitch", "GetConsole", "SonicWall", "CiscoSB")]
         [string]$DeviceType,
 
         [Parameter(Mandatory = $true, Position = 3)]
+        [AllowEmptyString()]
         [string[]]$Command,
 
         [Parameter(Mandatory = $false)]
