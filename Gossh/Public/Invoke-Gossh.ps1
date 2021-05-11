@@ -84,9 +84,16 @@ function Invoke-Gossh {
         $GosshExpression += " -enable '" + $EnablePassword + "'"
     }
 
+    # required to make error variable work
+    $GosshExpression += " 2>''"
+
     Write-Verbose $GosshExpression
 
-    $Results = Invoke-Expression -Command $GosshExpression
+    $Results = Invoke-Expression -Command $GosshExpression -ErrorVariable GosshError
+
+    if ($GosshError) {
+        Throw $GosshError
+    }
 
     #############################################################
     #endregion invokeGossh
