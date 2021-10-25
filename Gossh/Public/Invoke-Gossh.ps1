@@ -9,10 +9,6 @@ function Invoke-Gossh {
         [System.Management.Automation.Credential()]
         $Credential,
 
-        [Parameter(Mandatory = $true, Position = 2)]
-        [ValidateSet("ExtremeExos", "ExtremeEos", "CiscoASA", "PaloAlto", "HpSwitch", "HpRouter", "HpAruba", "CiscoSwitch", "GetConsole", "SonicWall", "CiscoSB")]
-        [string]$DeviceType,
-
         [Parameter(Mandatory = $true, Position = 3)]
         [AllowEmptyString()]
         [string[]]$Command,
@@ -24,7 +20,10 @@ function Invoke-Gossh {
         [Parameter(Mandatory = $false)]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $EnableCredential
+        $EnableCredential,
+
+        [Parameter(Mandatory = $false)]
+        [bool]$ConfigFile = $false
     )
 
     $VerbosePrefix = "Invoke-Gossh:"
@@ -58,30 +57,24 @@ function Invoke-Gossh {
 
     #region invokeGossh
     #############################################################
-    # \gossh.exe -host 1.1.1.1 -user admin -pass password -device lab -port 4001 -config "terminal pager 0/show run interface"
+    # \gossh.exe -h 1.1.1.1 -u admin -p password -P 4001 -C "terminal pager 0/show run interface" -f=false -t 35
 
     $GosshCommand = $Command -join '//'
     $GosshUsername = $Credential.UserName
     $GosshPassword = $Credential.GetNetworkCredential().Password
 
     $GosshExpression = '. "' + $GosshPath + '"'
-    $GosshExpression += ' -host ' + $Hostname
-    $GosshExpression += ' -user ' + $GosshUsername
-    <#     if ('' -eq $GosshPassword) {
-        Write-Verbose "$Password is null"
-        $GosshExpression += ' -pass ' + "'" + '\r\n' + "'"
-    } else {
-        $GosshExpression += ' -pass ' + "'" + $GosshPassword + "'"
-    } #>
-    $GosshExpression += ' -pass ' + "'" + $GosshPassword + "'"
-    $GosshExpression += ' -device ' + $DeviceType
-    $GosshExpression += ' -port ' + $Port
-    $GosshExpression += ' -command "' + $GosshCommand + '"'
+    $GosshExpression += ' -h ' + $Hostname
+    $GosshExpression += ' -u ' + $GosshUsername
+    $GosshExpression += ' -p ' + "'" + $GosshPassword + "'"
+    $GosshExpression += ' -P ' + $Port
+    $GosshExpression += ' -C "' + $GosshCommand + '"'
+    $GosshExpression += ' -f=' + $ConfigFile
 
     if ($EnableCredential) {
         #$EnableCredential = New-Object System.Management.Automation.PSCredential ('test', $EnablePassword)
         $EnablePassword = $EnableCredential.GetNetworkCredential().Password
-        $GosshExpression += " -enable '" + $EnablePassword + "'"
+        $GosshExpression += " -e '" + $EnablePassword + "'"
     }
 
     # required to make error variable work
