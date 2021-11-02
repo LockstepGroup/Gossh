@@ -12,7 +12,7 @@
     RootModule        = 'Gossh'
 
     # Version number of this module.
-    ModuleVersion     = '2.0.0'
+    ModuleVersion     = '2.0.1'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -107,12 +107,7 @@
             # IconUri = ''
 
             # ReleaseNotes of this module
-            ReleaseNotes = @'
-            2.0.0 revamps gossh so it is no longer required to specify the device type, improves buffer reading method so that data is not missing from output, and adds new features
-            timeout values can now be specifed (timeout values are in seconds but unless you are doing a upload/download/ect. the default value of 35 seconds should never be come close to be exceeded)
-            error log is generated in users home directory if the timeout value for reading the ssh buffer is exceded (error log contains the everything that was pulled from the ssh buffer before the timeout value was exceeded)
-            command files can be passed to gossh using -ConfigFile = $true (filepath goes in the -Command param)
-'@
+            ReleaseNotes = @()
 
         } # End of PSData hashtable
 

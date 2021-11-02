@@ -59,7 +59,7 @@ function Invoke-Gossh {
     #############################################################
     # \gossh.exe -h 1.1.1.1 -u admin -p password -P 4001 -C "terminal pager 0/show run interface" -f=false -t 35
 
-    $GosshCommand = $Command -join '//'
+    $GosshCommand = $Command -join '||'
     $GosshUsername = $Credential.UserName
     $GosshPassword = $Credential.GetNetworkCredential().Password
 
