@@ -12,7 +12,7 @@
     RootModule        = 'Gossh'
 
     # Version number of this module.
-    ModuleVersion     = '2.0.1'
+    ModuleVersion     = '2.0.2'
 
     # Supported PSEditions
     # CompatiblePSEditions = @()
@@ -21,7 +21,7 @@
     GUID              = '0d21149f-e0b1-4d97-9d58-940a45349a49'
 
     # Author of this module
-    Author            = 'brian.addicks@lockstepgroup.com'
+    Author            = 'brian.addicks@lockstepgroup.com, nmuragian@lockstepgroup.com'
 
     # Company or vendor of this module
     CompanyName       = 'Lockstep Technology Group'
