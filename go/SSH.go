@@ -6,8 +6,7 @@ import (
 
 	"golang.org/x/crypto/ssh"
 )
-var stopread = false
-func InvokeSSH(HostName string, Port string, UserName string, Password string, Commands []string, TimeoutValue int) {
+func InvokeSSH(HostName string, Port string, UserName string, Password string, Commands []string, TimeoutValue int, EnablePassword string) {
 	if Password == "blank" {
 		Password = ""
 	}
@@ -30,6 +29,10 @@ func InvokeSSH(HostName string, Port string, UserName string, Password string, C
 	handleError(err)
 	defer session.Close()
 	defer conn.Close()
+	if EnablePassword != ""{
+		writer(sshIn,"en")
+		writer(sshIn,EnablePassword)
+	}
 	for _, CLICommands := range Commands {
 			write(CLICommands, sshIn)
 			readBuff(sshOut, TimeoutValue,HostName)

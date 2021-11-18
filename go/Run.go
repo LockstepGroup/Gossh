@@ -33,14 +33,14 @@ func main() {
 	case false:
 		switch SSH {
 		case true:
-			InvokeSSH(HostName, Port, UserName, Password, StringToArray(CLIArguments), TimeoutValue)
+			InvokeSSH(HostName, Port, UserName, Password, StringToArray(CLIArguments), TimeoutValue, EnablePassword)
 		case false:
 			//InvokeTelnet(HostName, UserName, Password, EnablePassword, Port, StringToArray1(CLIArguments))
 		}
 	case true:
 		switch SSH {
 		case true:
-			InvokeSSH(HostName, Port, UserName, Password, readLines(CLIArguments), TimeoutValue)
+			InvokeSSH(HostName, Port, UserName, Password, readLines(CLIArguments), TimeoutValue, EnablePassword)
 		case false:
 			//InvokeTelnet(HostName, UserName, Password, EnablePassword, Port, StringToArray1(CLIArguments))
 		}
