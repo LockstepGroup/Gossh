@@ -34,12 +34,19 @@ if (
     "`t* You are in a known build system (Current: $ENV:BHBuildSystem)`n" +
     "`t* You are committing to the master branch (Current: $ENV:BHBranchName) `n" +
     "`t* Your commit message includes !deploy (Current: $ENV:BHCommitMessage)" |
-        Write-Host
+    Write-Host
 }
 
 # Publish to AppVeyor if we're in AppVeyor
 # You can use this to test a build from AppVeyor before pushing to psgallery
 # https://psdeploy.readthedocs.io/en/latest/Example-AppVeyorModule-Deployment/
+# Register-PSRepository -Name AppVeyorCorkScrew -SourceLocation https://ci.appveyor.com/nuget/corkscrew-xk7ko20iyyw1
+# Install-Module -Name CorkScrew -Repository AppVeyorCorkScrew
+# Import-Module CorkScrew
+#
+# Make sure to remove it after any tests
+# Uninstall-Module CorkScrew
+
 
 if (
     $env:BHPSModulePath -and

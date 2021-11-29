@@ -13,7 +13,7 @@ Properties {
     $CoverageFile = "cov.xml"
     $lines = '----------------------------------------------------------------------'
 
-    $Verbose = @{ }
+    $Verbose = @{}
     if ($ENV:BHCommitMessage -match "!verbose") {
         $Verbose = @{Verbose = $True }
     }
@@ -34,8 +34,16 @@ Task Test -Depends Init {
     "`n`tSTATUS: Testing with PowerShell $PSVersion"
 
     # Gather test results. Store them in a variable and file
-    $CodeCoverageFiles = (Get-ChildItem "$ProjectRoot/$($ENV:BHProjectName)" -Recurse -File -Filter *.ps1).FullName
-    $TestResults = Invoke-Pester -Path $ProjectRoot\Tests -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile" -CodeCoverage $CodeCoverageFiles -CodeCoverageOutputFile "$ProjectRoot\$CoverageFile"
+    $PesterConfiguration = [PesterConfiguration]::Default
+    $PesterConfiguration.Run.Path = "$ProjectRoot\Tests"
+    $PesterConfiguration.Should.ErrorAction = 'Stop'
+    $PesterConfiguration.CodeCoverage.Enabled = $true
+    $PesterConfiguration.TestResult.OutputPath = "$ProjectRoot\$TestFile"
+    $PesterConfiguration.TestResult.Enabled = $true
+    $PesterConfiguration.Run.PassThru = $true
+
+    #$TestResults = Invoke-Pester -Path $ProjectRoot\Tests -PassThru -OutputFormat NUnitXml -OutputFile "$ProjectRoot\$TestFile"
+    $TestResults = Invoke-Pester -Configuration $PesterConfiguration
 
     # In Appveyor?  Upload our tests! #Abstract this into a function?
     If ($ENV:BHBuildSystem -eq 'AppVeyor') {
@@ -65,21 +73,33 @@ Task Build -Depends Test {
     If ($ENV:BHBuildSystem -ne 'AppVeyor') {
         # Bump the module version
         Update-Metadata -Path $env:BHPSModuleManifest
-        if ($ENV:ReleaseNotes) {
-            Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ReleaseNotes -Value $ENV:ReleaseNotes
-        } else {
-            Update-Metadata -Path $env:BHPSModuleManifest -PropertyName ReleaseNotes -Value @()
-        }
     }
-
-    <# if ((Get-OsVersion) -match 'Windows') {
-        # download and install go
-        ./build-install-go.ps1
-    }
-    ./build-compile-go.ps1 #>
 }
 
-Task Deploy -Depends Build {
+Task Documentation -Depends Build {
+    $lines
+
+    $MkDocsYamlPath = Join-Path -Path $env:BHProjectPath -ChildPath 'mkdocs.yml'
+
+    If ($ENV:BHBuildSystem -ne 'AppVeyor') {
+        # Create mkdocs.yml file for readthedocs, would love to use powershell-yaml for this, but it was unreliable at best
+        $mkdocs = "site_name: $($env:BHProjectName) Docs`r`n"
+        $mkdocs += "theme: readthedocs`r`n"
+        $mkdocs += "pages:`r`n"
+        $mkdocs += "  - Home: index.md`r`n"
+        $mkdocs += "  - Cmdlets:`r`n"
+
+        Import-Module $env:BHPSModulePath
+        $Cmdlets = Get-Command -Module $env:BHProjectName
+        foreach ($cmdlet in $Cmdlets) {
+            $mkdocs += "    - $($cmdlet.Name): cmdlets/$($cmdlet.Name).md`r`n"
+        }
+
+        $mkdocs | Out-File -FilePath $MkDocsYamlPath -Force
+    }
+}
+
+Task Deploy -Depends Documentation {
     $lines
 
     $Params = @{
