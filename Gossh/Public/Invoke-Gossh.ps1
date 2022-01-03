@@ -23,7 +23,13 @@ function Invoke-Gossh {
         $EnableCredential,
 
         [Parameter(Mandatory = $false)]
-        [bool]$ConfigFile = $false
+        [bool]$ConfigFile = $false,
+
+        [Parameter(Mandatory = $false)]
+        [string]$ConfigPath,
+
+        [Parameter(Mandatory = $false)]
+        [bool]$SecondaryLogin = $false
     )
 
     $VerbosePrefix = "Invoke-Gossh:"
@@ -42,6 +48,7 @@ function Invoke-Gossh {
             if ($IsExecutable -notmatch 'true') {
                 $ExecutableCheckCommand = 'bash -c "chmod +x ' + $NixPath + '"'
                 $MakeExecutable = Invoke-Expression -Command $ExecutableCheckCommand
+                Write-Verbose $MakeExecutable
             }
         }
         default {
@@ -59,7 +66,6 @@ function Invoke-Gossh {
     #############################################################
     # \gossh.exe -h 1.1.1.1 -u admin -p password -P 4001 -C "terminal pager 0/show run interface" -f=false -t 35
 
-    $GosshCommand = $Command -join '||'
     $GosshUsername = $Credential.UserName
     $GosshPassword = $Credential.GetNetworkCredential().Password
 
@@ -68,9 +74,10 @@ function Invoke-Gossh {
     $GosshExpression += ' -u ' + $GosshUsername
     $GosshExpression += ' -p ' + "'" + $GosshPassword + "'"
     $GosshExpression += ' -P ' + $Port
-    $GosshExpression += ' -C "' + $GosshCommand + '"'
-    $GosshExpression += ' -f=' + $ConfigFile
-
+    if ($ConfigFile) { $GosshExpression += ' -f -d ' + $ConfigPath }else {
+        $GosshCommand = $Command -join '||' ; $GosshExpression += ' -C "' + $GosshCommand + '"'
+    }
+    if ($SecondaryLogin) { $GosshExpression += ' -s' }
     if ($EnableCredential) {
         #$EnableCredential = New-Object System.Management.Automation.PSCredential ('test', $EnablePassword)
         $EnablePassword = $EnableCredential.GetNetworkCredential().Password
