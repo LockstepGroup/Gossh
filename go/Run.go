@@ -1,48 +1,58 @@
 package main
 
 import (
-	"flag"
+	"fmt"
+	"github.com/TwiN/go-color"
+	"github.com/jessevdk/go-flags"
+	"os"
 )
 
-var Banner = false
-var bannerchecked = false
-var returnstring = ""
+var  returnStrings string
+var options Options
+var verbose bool
+var secondaryLogin bool
+
+type Options struct {
+	HostName       string   `short:"h" long:"hostname" description:"device url/ip"`
+	UserName       string   `short:"u" long:"username" description:"username used for authentication"`
+	PassWord       string   `short:"p" long:"password" description:"password used for authentication"`
+	EnablePassword string   `short:"e" long:"enablepassword" description:"username used for authentication"`
+	Port           int      `short:"P" long:"port" description:"tcp port device is listening on" default:"22"`
+	TimeOut           int      `short:"t" long:"timeout" description:"timeout value in seconds for each command execution" default:"10"`
+	CliArguments   string `short:"C" long:"cliarguments" description:"array containing cmdS to be run" `
+	DirectoryPath       string   `short:"d" long:"filePath" description:"filePath to document containing cmdS to be run"`
+	UseFile           bool     `short:"f" long:"usefile" description:"bool switch for using cmdS file"`
+	SecondaryLogin bool `short:"s" long:"secondarylogin" description:"bool switch for entering login credentials again as required by some cisco switches"`
+	Telnet            bool     `short:"T" long:"telnet" description:"option to use telnet instead of ssh"`
+	Help           bool     `short:"H" long:"help" description:"output help"`
+	Verbose bool `short:"v" long:"verbose" description:"print verbose"`
+}
 
 func main() {
-	var HostName string
-	var UserName string
-	var Password string
-	var EnablePassword string
-	var SSH bool
-	var File bool
-	var Port string
-	var CLIArguments string
-	var TimeoutValue int
-	//setting CLI Parameters//
-	flag.StringVar(&HostName, "h", "", "specify the host you are connecting to with either a hostname or ip address")
-	flag.StringVar(&UserName, "u", "", "specify device username")
-	flag.StringVar(&Password, "p", "", "specify device password")
-	flag.StringVar(&EnablePassword, "e", "", "specify device enable password")
-	flag.BoolVar(&SSH, "c", true, "specify connection type default is SSH")
-	flag.StringVar(&Port, "P", "22", "use this to specify port default is 22")
-	flag.StringVar(&CLIArguments, "C", "", "specify CLI commands to run on host device")
-	flag.BoolVar(&File, "f", false, "set to true of you are sending a config file")
-	flag.IntVar(&TimeoutValue, "t", 35, "change default timeout value")
-	flag.Parse()
-	switch File {
-	case false:
-		switch SSH {
-		case true:
-			InvokeSSH(HostName, Port, UserName, Password, StringToArray(CLIArguments), TimeoutValue)
-		case false:
-			//InvokeTelnet(HostName, UserName, Password, EnablePassword, Port, StringToArray1(CLIArguments))
+	parser:= flags.NewParser(&options,flags.Default&^flags.HelpFlag)
+	_, err := parser.Parse()
+	if nil != err {handleError(err,true,"Error parsing CLI arguments")}
+	if options.Help{parser.WriteHelp(os.Stdout);os.Exit(0)}
+	//bytes := make([]byte, 32)
+	//if _, err := rand.Read(bytes); err != nil {
+	//	handleError(err, true, "failed to create encryption key")
+	//}
+	//key := hex.EncodeToString(bytes)
+	verbose = options.Verbose
+	secondaryLogin = options.SecondaryLogin
+	switch {
+	case options.UseFile:
+		commandArguments := readConfigFile(options.DirectoryPath)
+		switch {
+		case options.Telnet:
+			//
+		default:
+			sshDial(options.HostName,options.Port,options.UserName,options.PassWord,commandArguments,options.TimeOut,options.EnablePassword)
 		}
-	case true:
-		switch SSH {
-		case true:
-			InvokeSSH(HostName, Port, UserName, Password, readLines(CLIArguments), TimeoutValue)
-		case false:
-			//InvokeTelnet(HostName, UserName, Password, EnablePassword, Port, StringToArray1(CLIArguments))
-		}
+	case options.Telnet:
+		println(color.Ize(color.Red,"Telnet functions are not ready yet terminating application")); os.Exit(1)
+	default:
+		sshDial(options.HostName, options.Port, options.UserName, options.PassWord,stringToArray(options.CliArguments),options.TimeOut,options.EnablePassword)
 	}
+	fmt.Println(returnStrings)
 }
